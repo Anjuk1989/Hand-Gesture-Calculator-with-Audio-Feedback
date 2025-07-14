@@ -19,7 +19,7 @@ https://www.youtube.com/watch?v=fMxcOvfYBkE&t=2s
 - 🧠 Stable gesture detection using **buffering and cooldown logic**
 - 🔢 Supports digits, arithmetic operations, undo & evaluation
 - 🗣️ Speaks input and result using **pyttsx3**
-- 🖥️ Display of expression and result using OpenCV overlays
+- 🖥️ Displays input expression and result on screen using OpenCV
 
 ---
 
@@ -29,6 +29,45 @@ https://www.youtube.com/watch?v=fMxcOvfYBkE&t=2s
 - OpenCV  
 - MediaPipe  
 - pyttsx3 (offline Text-to-Speech)  
-- NumPy, deque from collections
+- NumPy, deque (for buffering gestures)
 
+---
 
+## 🧠 Working Steps
+
+1. **Start Webcam**:  
+   The application uses OpenCV to access the webcam and capture real-time video frames.
+
+2. **Hand Detection**:  
+   MediaPipe detects hands and landmarks for each finger using the captured frames.
+
+3. **Finger Counting**:  
+   A function analyzes which fingers are raised based on hand orientation (left/right) to count fingers and identify gestures.
+
+4. **Gesture Mapping**:  
+   - Right hand: Used for digits 0–9  
+   - Left hand: Used for operators and special controls  
+     - 1 finger → '+'  
+     - 2 fingers → '-'  
+     - 3 fingers → '*'  
+     - 4 fingers → '/'  
+     - 5 fingers → '='  
+     - 0 fingers → Undo
+
+5. **Gesture Stability Check**:  
+   Gestures are buffered using a `deque`, and only registered when the same gesture is detected in consecutive frames (for stability).
+
+6. **Cooldown Mechanism**:  
+   Each gesture has a cooldown period to avoid repeated inputs when the hand remains in the same position.
+
+7. **Expression Building**:  
+   Detected digits and operators are appended to a string expression.
+
+8. **Voice Feedback**:  
+   The input (digit or operator) and the final result are spoken using `pyttsx3`.
+
+9. **Expression Evaluation**:  
+   When '=' is detected, the expression is evaluated using Python’s `eval()` function, and the result is displayed and read aloud.
+
+10. **Undo Functionality**:  
+    When gesture 'U' is shown (0 fingers on the left hand), the last character is removed from the expression.
